@@ -1,0 +1,94 @@
+CREATE TABLE Store (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  name VARCHAR(255),
+  userId VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME
+);
+
+CREATE TABLE Billboard (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  label VARCHAR(255),
+  imageUrl VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id)
+);
+
+CREATE TABLE Category (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  billboardId VARCHAR(36),
+  name VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id),
+  FOREIGN KEY (billboardId) REFERENCES Billboard(id)
+);
+
+CREATE TABLE Product (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  categoryId VARCHAR(36),
+  name VARCHAR(255),
+  price DECIMAL,
+  isFeatured BOOLEAN DEFAULT (false),
+  isArchived BOOLEAN DEFAULT (false),
+  sizeId VARCHAR(36),
+  colorId VARCHAR(36),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id),
+  FOREIGN KEY (categoryId) REFERENCES Category(id),
+  FOREIGN KEY (sizeId) REFERENCES Size(id),
+  FOREIGN KEY (colorId) REFERENCES Color(id)
+);
+
+CREATE TABLE Order (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  isPaid BOOLEAN DEFAULT (false),
+  phone VARCHAR(255) DEFAULT (""),
+  address VARCHAR(255) DEFAULT (""),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id)
+);
+
+CREATE TABLE OrderItem (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  orderId VARCHAR(36),
+  productId VARCHAR(36),
+  FOREIGN KEY (orderId) REFERENCES Order(id),
+  FOREIGN KEY (productId) REFERENCES Product(id)
+);
+
+CREATE TABLE Size (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  name VARCHAR(255),
+  value VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id)
+);
+
+CREATE TABLE Color (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  storeId VARCHAR(36),
+  name VARCHAR(255),
+  value VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (storeId) REFERENCES Store(id)
+);
+
+CREATE TABLE Image (
+  id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  productId VARCHAR(36),
+  url VARCHAR(255),
+  createdAt DATETIME DEFAULT (NOW()),
+  updatedAt DATETIME,
+  FOREIGN KEY (productId) REFERENCES Product(id) ON DELETE CASCADE
+);
